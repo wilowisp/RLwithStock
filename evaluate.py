@@ -5,16 +5,17 @@ from agent.agent import Agent
 from functions import *
 import sys
 
-if len(sys.argv) != 3:
-	print("Usage: python evaluate.py [stock] [model]")
+if len(sys.argv) != 4:
+	print("Usage: python evaluate.py [stock] [model] [tgtposi]")
 	exit()
 
-stock_name, model_name = sys.argv[1], sys.argv[2]
+stock_name, model_name, tgtposi = sys.argv[1], sys.argv[2], int(sys.argv[3])
 model = load_model("models/" + model_name)
 window_size = model.layers[0].input.shape.as_list()[1]
 
 agent = Agent(window_size, True, model_name)
-data = getStockDataVec(stock_name)
+print("MODEL({}) is loaded.".format(model_name))
+data = getStockDataVec(stock_name, tgtposi)
 l = len(data) - 1
 batch_size = 32
 

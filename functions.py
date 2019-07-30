@@ -3,21 +3,29 @@ import math
 
 # prints formatted price
 def formatPrice(n):
-	return ("-$" if n < 0 else "$") + "{0:.2f}".format(abs(n))
+	return  ("-" if n < 0 else "")+ "{0}".format(abs(n)) + "원" 
 
 # returns the vector containing stock data from a fixed file
-def getStockDataVec(key):
+def getStockDataVec(key, tgtposi):
 	vec = []
 	lines = open("data/" + key + ".csv", "r").read().splitlines()
 
+	# 제목 열 날리고 나머지 데이터들을 loop
 	for line in lines[1:]:
-		vec.append(float(line.split(",")[4]))
+		# [..., close_t-1, close_t, ... ] 
+		vec.append(float(line.split(",")[tgtposi]))
 
 	return vec
 
 # returns the sigmoid
 def sigmoid(x):
-	return 1 / (1 + math.exp(-x))
+	try:
+		retval = 1.0 / (1+ math.exp(-x))
+	except OverflowError:
+		retval = 1.0 / float('inf')
+	
+	
+	return retval
 
 # returns an an n-day state representation ending at time t
 def getState(data, t, n):
