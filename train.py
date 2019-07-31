@@ -54,12 +54,13 @@ for e in range(1, episode_count + 1):
 			if verbose:
 				print("{}/{} {}".format(t,l-1, len(agent.inventory)) + " Sell: " + formatPrice(data[t]) + " | Profit: " + formatPrice(data[t] - bought_price))
 		elif action == 0:
+			reward = -.1 # 매수/매도보다 그대로 있으려는 경향이 커져서 매우 작은 penalty 부여
 			actioncnt['hold'] += 1
 			if verbose:
 				print("{}/{} {}".format(t,l-1, len(agent.inventory)) + " Sit:")
 		else:
 			actioncnt['0sell'] += 1
-			reward = -1 # 없는데 Sell을 시도할 때는 penalty로 1원을 차감
+			reward = -10 # 없는데 Sell을 시도할 때는 penalty 부여
 			if verbose:
 				print("{}/{} {} {}".format(t,l-1, len(agent.inventory), action))
 			
