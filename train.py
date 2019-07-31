@@ -62,7 +62,7 @@ for e in range(1, episode_count + 1):
 				print("{}/{} {}".format(t,l-1, len(agent.inventory)) + " Sit:")
 		else:
 			actioncnt['0sell'] += 1
-			reward = -10 # 없는데 Sell을 시도할 때는 penalty 부여
+			reward = -1000 # 없는데 Sell을 시도할 때는 penalty 부여
 			if verbose:
 				print("{}/{} {} {}".format(t,l-1, len(agent.inventory), action))
 			
