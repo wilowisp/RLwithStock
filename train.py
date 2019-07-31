@@ -30,20 +30,22 @@ for e in range(1, episode_count + 1):
 
 	total_profit = 0
 	agent.inventory = []
+	actioncnt = {"buy":0, "sell":0, "hold":0, "0sell":0}
 
 	for t in range(l):
 		action = agent.act(state)
 
-		# sit
 		next_state = getState(data, t + 1, window_size + 1)
 		reward = 0
 
 		if action == 1: # buy
 			agent.inventory.append(data[t]) # inventory = [] 구입한 가격이 들어있는 저장소
+			actioncnt['buy'] += 1
 			if verbose:
 				print("{}/{} {}".format(t,l-1, len(agent.inventory)) + " Buy: " + formatPrice(data[t]))
 
 		elif action == 2 and len(agent.inventory) > 0: # sell
+			actioncnt['sell'] += 1
 			bought_price = agent.inventory.pop(0)
 			# reward의 최소값을 0으로 고정하고 있지만 손실에 대한 penalty를 주는 편이 낫지 않을까?
 			#reward = max(data[t] - bought_price, 0) 
@@ -52,9 +54,11 @@ for e in range(1, episode_count + 1):
 			if verbose:
 				print("{}/{} {}".format(t,l-1, len(agent.inventory)) + " Sell: " + formatPrice(data[t]) + " | Profit: " + formatPrice(data[t] - bought_price))
 		elif action == 0:
+			actioncnt['hold'] += 1
 			if verbose:
 				print("{}/{} {}".format(t,l-1, len(agent.inventory)) + " Sit:")
 		else:
+			actioncnt['0sell'] += 1
 			reward = -1 # 없는데 Sell을 시도할 때는 penalty로 1원을 차감
 			if verbose:
 				print("{}/{} {} {}".format(t,l-1, len(agent.inventory), action))
@@ -68,6 +72,7 @@ for e in range(1, episode_count + 1):
 		if done:
 			print("--------------------------------")
 			print("Total Profit: " + formatPrice(total_profit))
+			print(actioncnt)
 			print("--------------------------------")
 
 		if len(agent.memory) > batch_size:
