@@ -21,9 +21,11 @@ data = getStockDataVec(stock_name, tgtposi)
 l = len(data) - 1
 # TODO 확인
 batch_size = 32
+train_period = 100
 verbose = False
 
 # episode 횟수만큼 반복 학습
+historicalmax = 0
 for e in range(1, episode_count + 1):
 	print("Episode " + str(e) + "/" + str(episode_count))
 	state = getState(data, 0, window_size + 1)
@@ -75,12 +77,16 @@ for e in range(1, episode_count + 1):
 			print("Total Profit: " + formatPrice(total_profit))
 			print(actioncnt)
 			print("--------------------------------")
+			
+			if total_profit > historicalmax:
+				historicalmax = total_profit
+				agent.model.save("models/model_ep" + str(e) + "_" + stock_name + "({0})".format(total_profit))
 
-		if len(agent.memory) > batch_size:
+		# memory에 저장된 것이 크면 사례마다 학습하던 것을 일정 빈도마다 학습하도록 변경
+		if len(agent.memory) > batch_size and t % train_period == 0:
 			#agent.expReplay(batch_size)
 			agent.fitnetwork(batch_size)
 
-	if e % 10 == 0:
+	if e % 50 == 0:
 		agent.model.save("models/model_ep" + str(e) + "_" + stock_name)
 
-agent.model.save("models/model_ep" + str(e) + "_" + stock_name)
